@@ -1,0 +1,2 @@
+authy==2.2.3
+gunicorn==19.9.0

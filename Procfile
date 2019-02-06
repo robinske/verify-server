@@ -1,0 +1,1 @@
+web: gunicorn verify:app --log-file -
