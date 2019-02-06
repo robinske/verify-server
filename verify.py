@@ -11,29 +11,32 @@ api = AuthyApiClient(app.config['AUTHY_API_KEY'])
 
 @app.route("/start", methods=["POST"])
 def start():
-    country_code = request.form.get("country_code")
-    phone_number = request.form.get("phone_number")
+    country_code = request.values.get("country_code")
+    phone_number = request.values.get("phone_number")
 
-    r = api.phones.verification_start(phone_number, country_code, via='sms')
+    r = api.phones.verification_start(
+        phone_number=phone_number, 
+        country_code=country_code,
+        via='sms')
 
     if r.ok():
-        return jsonify(message = r.content['message'])
+        return jsonify(success=True, message = r.content['message'])
     else:
-        return jsonify(r.errors())
+        return jsonify(success=False, message=r.errors()['message'])
 
 
 @app.route("/check", methods=["POST"])
 def check():
-    country_code = request.form.get("country_code")
-    phone_number = request.form.get("phone_number")
-    code = request.form.get("verification_code")
+    country_code = request.values.get("country_code")
+    phone_number = request.values.get("phone_number")
+    code = request.values.get("verification_code")
 
     r = api.phones.verification_check(phone_number, country_code, code)
 
     if r.ok():
-        return jsonify(message=r.content['message'])
+        return jsonify(success=True, message=r.content['message'])
     else:
-        return jsonify(r.errors())
+        return jsonify(success=False, message=r.errors()['message'])
 
 
 if __name__ == '__main__':
