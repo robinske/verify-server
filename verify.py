@@ -1,5 +1,5 @@
 from authy.api import AuthyApiClient
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify
 
 
 app = Flask(__name__)
@@ -14,9 +14,6 @@ def start():
     country_code = request.form.get("country_code")
     phone_number = request.form.get("phone_number")
 
-    session['country_code'] = country_code
-    session['phone_number'] = phone_number
-
     r = api.phones.verification_start(phone_number, country_code, via='sms')
 
     if r.ok():
@@ -27,10 +24,9 @@ def start():
 
 @app.route("/check", methods=["POST"])
 def check():
-    code = request.form.get("code")
-
-    phone_number = session.get("phone_number")
-    country_code = session.get("country_code")
+    country_code = request.form.get("country_code")
+    phone_number = request.form.get("phone_number")
+    code = request.form.get("verification_code")
 
     r = api.phones.verification_check(phone_number, country_code, code)
 
