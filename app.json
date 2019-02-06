@@ -1,0 +1,7 @@
+{
+  "name": "Verify Server",
+  "description": "A sample for the Verify Backend",
+  "repository": "https://github.com/robinske/verify-server",
+  "logo": "https://www.twilio.com/marketing/bundles/company/img/logos/red/twilio-mark-red.png",
+  "keywords": ["python", "authy", "twilio", "verify", "ios"]
+}
