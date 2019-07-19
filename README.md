@@ -1,6 +1,6 @@
 # Verify Backend
 
-The following project is a sample for implementing the backend needed for supporting the Phone Verification in iOS apps.
+The following project is a sample for implementing the backend needed for supporting the Phone Verification in iOS apps. Full  tutorial for adding phone verification available on the Twilio blog: https://www.twilio.com/blog/phone-verification-in-ios-with-twilio-verify-and-swift-html
 
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/robinske/verify-server)
 
