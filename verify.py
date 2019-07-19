@@ -39,5 +39,22 @@ def check():
         return jsonify(success=False, message=r.errors()['message'])
 
 
+@app.route("/")
+def index():
+    """
+    Check to make sure environment variables are set.
+    """
+
+    if app.config.get('AUTHY_API_KEY') is None:
+        return """
+        AUTHY_API_KEY not set as an environment variable.
+        If you're running this on Heroku, add the environment variable
+        using the <a href="https://devcenter.heroku.com/articles/config-vars#using-the-heroku-dashboard">dashboard</a>
+        or the <a href="https://devcenter.heroku.com/articles/config-vars#managing-config-vars">CLI</a>
+        """
+    else:
+        return "All set! Use /start and /check endpoints in your application."
+
+
 if __name__ == '__main__':
     app.run(debug=True)
