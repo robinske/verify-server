@@ -2,6 +2,10 @@
 
 The following project is a sample for implementing the backend needed for supporting the Phone Verification in iOS apps. Full  tutorial for adding phone verification available on the Twilio blog: https://www.twilio.com/blog/phone-verification-in-ios-with-twilio-verify-and-swift-html
 
+Also available in:
+* [Node.js](https://github.com/robinske/verify-server-node)
+* [Golang](https://github.com/robinske/go-verify-backend)
+
 ## Heroku
 
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/robinske/verify-server)
