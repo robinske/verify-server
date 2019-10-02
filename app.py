@@ -6,7 +6,7 @@ app = Flask(__name__)
 app.config.from_object('app_config')
 app.secret_key = 'super-secret'
 
-client = Client(app.config['ACCOUNT_SID'], app.config['AUTH_TOKEN'])
+client = Client(app.config['TWILIO_ACCOUNT_SID'], app.config['TWILIO_AUTH_TOKEN'])
 
 
 @app.route("/start", methods=["POST"])
@@ -15,7 +15,7 @@ def start():
     phone_number = request.values.get("phone_number")
     full_phone = "+{}{}".format(country_code, phone_number)
 
-    SERVICE = app.config['SERVICE_SID']
+    SERVICE = app.config['VERIFY_SERVICE_SID']
 
     r = client.verify \
         .services(SERVICE) \
@@ -35,7 +35,7 @@ def check():
     full_phone = "+{}{}".format(country_code, phone_number)
     code = request.values.get("verification_code")
 
-    SERVICE = app.config['SERVICE_SID']
+    SERVICE = app.config['VERIFY_SERVICE_SID']
 
     r = client.verify \
         .services(SERVICE) \
@@ -53,7 +53,7 @@ def index():
     """
     Check to make sure environment variables are set.
     """
-    required_config_vars = ['ACCOUNT_SID', 'AUTH_TOKEN', 'SERVICE_SID']
+    required_config_vars = ['TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN', 'VERIFY_SERVICE_SID']
     missing_config_vars = []
 
     for cv in required_config_vars:
