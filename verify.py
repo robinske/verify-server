@@ -1,4 +1,4 @@
-from authy.api import AuthyApiClient
+from twilio.rest import Client
 from flask import Flask, request, jsonify
 
 
@@ -6,37 +6,47 @@ app = Flask(__name__)
 app.config.from_object('app_config')
 app.secret_key = 'super-secret'
 
-api = AuthyApiClient(app.config['AUTHY_API_KEY'])
+client = Client(app.config['ACCOUNT_SID'], app.config['AUTH_TOKEN'])
 
 
 @app.route("/start", methods=["POST"])
 def start():
     country_code = request.values.get("country_code")
     phone_number = request.values.get("phone_number")
+    full_phone = "+{}{}".format(country_code, phone_number)
 
-    r = api.phones.verification_start(
-        phone_number=phone_number, 
-        country_code=country_code,
-        via='sms')
+    SERVICE = app.config['SERVICE_SID']
 
-    if r.ok():
-        return jsonify(success=True, message = r.content['message'])
+    r = client.verify \
+        .services(SERVICE) \
+        .verifications \
+        .create(to=full_phone, channel='sms')
+
+    if r.status == "pending":
+        return jsonify(success=True, message="Verification sent to {}".format(r.to))
     else:
-        return jsonify(success=False, message=r.errors()['message'])
+        return jsonify(success=False, message="Error sending verification. Status: {}".format(r.status))
 
 
 @app.route("/check", methods=["POST"])
 def check():
     country_code = request.values.get("country_code")
     phone_number = request.values.get("phone_number")
+    full_phone = "+{}{}".format(country_code, phone_number)
     code = request.values.get("verification_code")
+    print(code)
 
-    r = api.phones.verification_check(phone_number, country_code, code)
+    SERVICE = app.config['SERVICE_SID']
 
-    if r.ok():
-        return jsonify(success=True, message=r.content['message'])
+    r = client.verify \
+        .services(SERVICE) \
+        .verification_checks \
+        .create(to=full_phone, code=code)
+
+    if r.status == "approved":
+        return jsonify(success=True, message="Valid token.")
     else:
-        return jsonify(success=False, message=r.errors()['message'])
+        return jsonify(success=False, message="Invalid token.")
 
 
 @app.route("/")
@@ -45,10 +55,14 @@ def index():
     Check to make sure environment variables are set.
     """
 
-    if app.config.get('AUTHY_API_KEY') is None:
+    config_setup_complete = app.config.get('TWILIO_ACCOUNT_SID') and \
+        app.config.get('TWILIO_AUTH_TOKEN') and \
+        app.config.get('VERIFY_SERVICE_SID')
+
+    if not config_setup_complete:
         return """
-        AUTHY_API_KEY not set as an environment variable.
-        If you're running this on Heroku, add the environment variable
+        Environment variables not set: `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `VERIFY_SERVICE_SID`
+        If you're running this on Heroku, add the missing environment variables
         using the <a href="https://devcenter.heroku.com/articles/config-vars#using-the-heroku-dashboard">dashboard</a>
         or the <a href="https://devcenter.heroku.com/articles/config-vars#managing-config-vars">CLI</a>
         """
