@@ -34,7 +34,6 @@ def check():
     phone_number = request.values.get("phone_number")
     full_phone = "+{}{}".format(country_code, phone_number)
     code = request.values.get("verification_code")
-    print(code)
 
     SERVICE = app.config['SERVICE_SID']
 
@@ -54,21 +53,19 @@ def index():
     """
     Check to make sure environment variables are set.
     """
+    required_config_vars = ['ACCOUNT_SID', 'AUTH_TOKEN', 'SERVICE_SID']
+    missing_config_vars = []
 
-    config_setup_complete = app.config.get('TWILIO_ACCOUNT_SID') and \
-        app.config.get('TWILIO_AUTH_TOKEN') and \
-        app.config.get('VERIFY_SERVICE_SID')
-
-    if not config_setup_complete:
+    for cv in required_config_vars:
+        if app.config.get(cv) is None:
+            missing_config_vars.append(cv)
+    
+    if len(missing_config_vars) > 0:
         return """
-        Environment variables not set: `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `VERIFY_SERVICE_SID`
+        Environment variables not set: {}
         If you're running this on Heroku, add the missing environment variables
         using the <a href="https://devcenter.heroku.com/articles/config-vars#using-the-heroku-dashboard">dashboard</a>
         or the <a href="https://devcenter.heroku.com/articles/config-vars#managing-config-vars">CLI</a>
-        """
+        """.format(", ".join(missing_config_vars))
     else:
         return "All set! Use /start and /check endpoints in your application."
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
