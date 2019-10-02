@@ -1,4 +1,4 @@
 Flask==1.0.2
-authy==2.2.3
+twilio==6.26.3
 gunicorn==19.9.0
 python-dotenv==0.10.1
