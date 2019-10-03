@@ -1,8 +1,9 @@
 from twilio.rest import Client
 from flask import Flask, request, jsonify
-
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 app.config.from_object('app_config')
 app.secret_key = 'super-secret'
 
