@@ -18,15 +18,14 @@ def start():
 
     SERVICE = app.config['VERIFY_SERVICE_SID']
 
-    r = client.verify \
-        .services(SERVICE) \
-        .verifications \
-        .create(to=full_phone, channel='sms')
-
-    if r.status == "pending":
+    try:
+        r = client.verify \
+            .services(SERVICE) \
+            .verifications \
+            .create(to=full_phone, channel='sms')
         return jsonify(success=True, message="Verification sent to {}".format(r.to))
-    else:
-        return jsonify(success=False, message="Error sending verification. Status: {}".format(r.status))
+    except Exception as e:
+        return jsonify(success=False, message="Error sending verification: {}".format(e))
 
 
 @app.route("/check", methods=["POST"])
@@ -38,15 +37,18 @@ def check():
 
     SERVICE = app.config['VERIFY_SERVICE_SID']
 
-    r = client.verify \
-        .services(SERVICE) \
-        .verification_checks \
-        .create(to=full_phone, code=code)
+    try:
+        r = client.verify \
+            .services(SERVICE) \
+            .verification_checks \
+            .create(to=full_phone, code=code)
 
-    if r.status == "approved":
-        return jsonify(success=True, message="Valid token.")
-    else:
-        return jsonify(success=False, message="Invalid token.")
+        if r.status == "approved":
+            return jsonify(success=True, message="Valid token.")
+        else:
+            return jsonify(success=False, message="Invalid token.")
+    except Exception as e:
+        return jsonify(success=False, message="Error checking verification: {}".format(e))
 
 
 @app.route("/")
