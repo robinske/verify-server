@@ -1,5 +1,5 @@
 Flask==1.0.2
-flask-cors==3.0.8
+flask-cors==3.0.9
 twilio==6.26.3
 gunicorn==19.9.0
 python-dotenv==0.10.1
